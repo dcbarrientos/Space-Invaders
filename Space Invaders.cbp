@@ -30,7 +30,19 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add directory="C:/Dev/CodeBlocks/Libs/allegro-4.2.3/include" />
 		</Compiler>
+		<Linker>
+			<Add library="C:/Dev/CodeBlocks/Libs/allegro-4.2.3/lib/libaldat.a" />
+			<Add library="C:/Dev/CodeBlocks/Libs/allegro-4.2.3/lib/liballd.a" />
+			<Add library="C:/Dev/CodeBlocks/Libs/allegro-4.2.3/lib/liballd_s.a" />
+			<Add library="C:/Dev/CodeBlocks/Libs/allegro-4.2.3/lib/liballeg.a" />
+			<Add library="C:/Dev/CodeBlocks/Libs/allegro-4.2.3/lib/liballeg_s.a" />
+			<Add library="C:/Dev/CodeBlocks/Libs/allegro-4.2.3/lib/liballp.a" />
+			<Add library="C:/Dev/CodeBlocks/Libs/allegro-4.2.3/lib/liballp_s.a" />
+			<Add directory="C:/Dev/CodeBlocks/Libs/allegro-4.2.3/lib" />
+		</Linker>
+		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
