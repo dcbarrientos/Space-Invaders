@@ -2,13 +2,16 @@
 #define ELEMENT_H_INCLUDED
 
 #include <string>
+#include <allegro.h>
 
 class Element{
+    protected:
     int x, y;       //Posicion del elememento
-    BITMAP img;     //Imagen del elemento
+    int width, height;
+    BITMAP *img;     //Imagen del elemento
 
     public:
-    Element(int _x, int _y, std::string img_path);
+    Element(int _x, int _y, int width, int height, char* img_path);
     void update();
     void render(BITMAP *buffer);
 };

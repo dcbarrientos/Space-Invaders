@@ -11,5 +11,6 @@
 
 void init_allegro(int ancho, int alto);
 bool init_audio(int vol_derecha, int vol_izquierda);
-
+void render(BITMAP *buffer);
+void update();
 #endif // MAIN_H_INCLUDED
