@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "main.h"
+#include "nave.h"
 
 using namespace std;
 
@@ -9,7 +10,24 @@ using namespace std;
 int main(int argc, char *argv[]){
     init_allegro(WIDTH, HEIGHT);
     init_audio(70, 70);
-    return 1;
+
+    BITMAP *buffer = create_bitmap(WIDTH, HEIGHT);
+    BITMAP *bala = load_bitmap("resources/Bala2.bmp", NULL);
+    //BITMAP *nave = load_bitmap("resources/nave.bmp", NULL);
+
+    int x = WIDTH / 2;
+    int y = HEIGHT - 50;
+    int ndisparos = 0;
+    string nave_path = "resources/nave.bmp";
+    Nave nave(x, y, nave_path);
+
+    while(!key[KEY_ESC]){
+        clear_to_color(buffer, 0x000000);
+        //masked_blit(nave, buffer, 0, 0, x, y, NAVE_WIDTH, NAVE_HEIGHT);
+
+    }
+
+    return 0;
 }
 
 void init_allegro(int ancho, int alto){

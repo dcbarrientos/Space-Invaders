@@ -42,7 +42,20 @@
 			<Add library="C:/Dev/CodeBlocks/Libs/allegro-4.2.3/lib/liballp_s.a" />
 			<Add directory="C:/Dev/CodeBlocks/Libs/allegro-4.2.3/lib" />
 		</Linker>
+		<Unit filename="element.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="element.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="main.cpp" />
+		<Unit filename="main.h" />
+		<Unit filename="nave.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="nave.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
