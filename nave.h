@@ -11,8 +11,6 @@ class Nave: public Element{
     Nave(int x, int y, int width, int height, char* img_path): Element(x, y, width, height, img_path){};
     void move(int key);
     void update(int key);
-    //void render(BITMAP *buffer);
-
 };
 
 #endif // NAVE_H_INCLUDED

@@ -1,8 +1,9 @@
 #include <iostream>
+#include "main.h"
 #include "bala.h"
 
 Bala::~Bala(){
-    std::cout << "elimino bala" << std::endl;
+
 }
 
 void Bala::update(){
@@ -14,7 +15,7 @@ bool Bala::is_out(){
         if((y + height) < 0)
             return true;
     }else{
-        if((y - height > height))
+        if((y - height > SCREEN_HEIGHT))
             return true;
     }
 

@@ -1,4 +1,3 @@
-#include <allegro.h>
 #include <iostream>
 #include <vector>
 
@@ -13,30 +12,28 @@ Nave *nave;
 Bala *bala_player;
 vector<Bala*> balas_enemigos;
 vector<Enemigo*> enemigos;
-int cont;
+int cont; //Tiempo espera entre tiros de los enemigos.
 
 //https://www.youtube.com/watch?v=a2MoETBfdQE&list=PL6hPvfzEEMDZ4PSkN-5Zj_0-YVO7b0OgC&index=3
 int main(int argc, char *argv[]){
-    init_allegro(WIDTH, HEIGHT);
-    init_audio(70, 70);
+    init_allegro(SCREEN_WIDTH, SCREEN_HEIGHT);
+    //init_audio(70, 70);
 
-    BITMAP *buffer = create_bitmap(WIDTH, HEIGHT);
+    BITMAP *buffer = create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    srand(time(NULL));
 
     char nave_path[] = "resources\\nave.bmp";
     char bala_path[] = "resources\\bala2.bmp";
-    char enemigos_path[] = "resources\\enemigos.bmp";
 
-    int x = WIDTH / 2;
-    int y = HEIGHT - 50;
+    int x = SCREEN_WIDTH / 2;
+    int y = SCREEN_HEIGHT - 50;
     cont = 0;
 
     balas_enemigos.clear();
 
     nave = new Nave(x, y, NAVE_WIDTH, NAVE_HEIGHT, nave_path);
-    enemigos.insert(enemigos.end(), new Enemigo(50, 80, 25, 20, 5, enemigos_path));
-    enemigos.insert(enemigos.end(), new Enemigo(75, 80, 25, 20, 5, enemigos_path));
-    enemigos.insert(enemigos.end(), new Enemigo(100, 80, 25, 20, 5, enemigos_path));
-
+    load_level();
     while(!key[KEY_ESC]){
         clear_to_color(buffer, 0x000000);
 
@@ -51,7 +48,7 @@ int main(int argc, char *argv[]){
                 bala_player = new Bala(xt, nave->get_y(), BALA_WIDTH, BALA_HEIGHT, BALA_SPEED * -1,bala_path);
             }
         }
-        disparar_enemigo();
+        disparar_enemigo(rand() % enemigos.size());
 
         update();
         render(buffer);
@@ -64,15 +61,31 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
+void load_level(){
+    int xt = 50;
+    int yt = 80;
+    int stepx = 25;
+    int stepy = 20;
+    char enemigos_path[] = "resources\\enemigos.bmp";
+
+    for(int i = 0; i < 11; i++){
+        for(int j = 0; j < 5; j++){
+            enemigos.insert(enemigos.end(), new Enemigo(xt + i * stepx, yt + j * stepy, 25, 20, (int)(j / 2), enemigos_path));
+        }
+    }
+}
+
 void update(){
     for(unsigned int i = 0; i < balas_enemigos.size(); i++)
         balas_enemigos[i]->update();
-/*
+
     for(unsigned int i = 0; i < balas_enemigos.size(); i++){
-        if(balas_enemigos[i]->is_out())
+        if(balas_enemigos[i]->is_out()){
+            delete(balas_enemigos[i]);
             balas_enemigos.erase(balas_enemigos.begin() + i);
+        }
     }
-*/
+
     if(bala_player != NULL){
         bala_player->update();
 
@@ -82,8 +95,15 @@ void update(){
         }
     }
 
-    for(unsigned int i = 0; i < enemigos.size(); i++)
+    if(is_cambio_direccion()){
+        for(unsigned int i = 0; i < enemigos.size(); i++)
+            enemigos[i]->cambiar_rumbo();
+    }
+
+    for(unsigned int i = 0; i < enemigos.size(); i++){
         enemigos[i]->update();
+    }
+
 
     //Verificar colisiones
 }
@@ -99,19 +119,25 @@ void render(BITMAP *buffer){
     for(unsigned int i = 0; i < enemigos.size(); i++)
         enemigos[i]->render(buffer);
 
-    blit(buffer, screen, 0, 0, 0, 0, WIDTH, HEIGHT);
+    blit(buffer, screen, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-void disparar_enemigo(){
+bool is_cambio_direccion(){
+    for(unsigned int i = 0; i < enemigos.size(); i++){
+        if(enemigos[i]->is_borde(SCREEN_WIDTH))
+            return true;
+    }
+    return false;
+}
+
+//Funcion que hace que un enemigo dispare.
+void disparar_enemigo(int n_enemigo){
     if(cont++ == BALA_ENEMIGO_ESPERA){
         cont = 0;
         char bala_enemigo_path[] = "resources\\Bala_enem.bmp";
 
-        int n_enemigo = get_random(0, enemigos.size() - 1);
-        cout << n_enemigo << endl;
         int xt = enemigos[n_enemigo]->get_x() + BALA_ENEMIGO_WIDTH / 2;
         balas_enemigos.insert(balas_enemigos.end(), new Bala(xt, enemigos[n_enemigo]->get_y(), BALA_ENEMIGO_WIDTH, BALA_ENEMIGO_HEIGHT, BALA_SPEED, bala_enemigo_path));
-        cout << "cont: " << cont << " balas: " << balas_enemigos.size() << endl;
     }
 }
 
