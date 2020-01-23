@@ -22,4 +22,18 @@ bool Bala::is_out(){
     return false;
 }
 
+bool Bala::colision(Element *e){
+    if(!e->get_hit()){
+        if((x + width) < e->get_x() || x > (e->get_x() + e->get_width())){
+            return false;
+        } else {
+            if((y + height) < e->get_y() || y > (e->get_y() + e->get_height()))
+                return false;
+            else
+                return true;
+        }
+    }
+    return false;
+}
+
 

@@ -12,6 +12,7 @@ public:
     ~Bala();
     void update();
     bool is_out();
+    bool colision(Element *e);
 };
 
 #endif // BALA_H_INCLUDED
