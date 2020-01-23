@@ -46,8 +46,12 @@
 		<Unit filename="bala.h" />
 		<Unit filename="element.cpp" />
 		<Unit filename="element.h" />
+		<Unit filename="enemigo.cpp" />
+		<Unit filename="enemigo.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.h" />
+		<Unit filename="math.cpp" />
+		<Unit filename="math.h" />
 		<Unit filename="nave.cpp" />
 		<Unit filename="nave.h" />
 		<Extensions>

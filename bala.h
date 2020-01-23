@@ -2,15 +2,16 @@
 #define BALA_H_INCLUDED
 
 #include "element.h"
+#include "main.h"
 
-#define SPEED 8
-#define BALA_WIDTH
-#define BALA_HEIGHT
-
-class Bala: Element{
-
-    Bala(int x, int y, int width, int height, char *img_path): Element(x, y, width, height, img_path){};
+class Bala: public Element{
+private:
+    int speed;
+public:
+    Bala(int x, int y, int width, int height, int _speed, char *img_path): Element(x, y, width, height, img_path), speed(_speed){};
+    ~Bala();
     void update();
+    bool is_out();
 };
 
 #endif // BALA_H_INCLUDED

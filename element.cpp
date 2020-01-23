@@ -18,3 +18,11 @@ void Element::render(BITMAP *buffer){
 
 void Element::update(){
 }
+
+int Element::get_x(){
+    return x;
+}
+
+int Element::get_y(){
+    return y;
+}
