@@ -70,8 +70,8 @@ void load_level(){
     int stepy = 20;
     char enemigos_path[] = "resources\\enemigos.bmp";
 
-    for(int i = 0; i < 1; i++){
-        for(int j = 0; j < 5; j++){
+    for(int i = 0; i < ENEMIGOS_FILA; i++){
+        for(int j = 0; j < ENEMIGOS_COLUMNA; j++){
             enemigos.insert(enemigos.end(), new Enemigo(xt + i * stepx, yt + j * stepy, 25, 20, (int)(j / 2), enemigos_path));
         }
     }
@@ -116,7 +116,6 @@ void update(){
     //elimino enemigos que estan en condiciones de ser eliminados.
     for(unsigned int i = 0; i < enemigos.size(); i++){
         if(enemigos[i]->get_destroy()){
-                cout << "Elimino " << i << "/" << enemigos.size() << endl;
             delete(enemigos[i]);
             enemigos.erase(enemigos.begin() + i);
         }

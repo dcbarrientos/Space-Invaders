@@ -6,6 +6,9 @@
 #define SCREEN_WIDTH 600
 #define SCREEN_HEIGHT 375
 
+#define ENEMIGOS_COLUMNA 5
+#define ENEMIGOS_FILA 11
+
 #define NAVE_WIDTH 30
 #define NAVE_HEIGHT 20
 #define BALA_WIDTH 6

@@ -11,6 +11,7 @@ class Enemigo: public Element{
 private:
     int tipo;
     int img_actual;
+    int tiempo_espera;
     int tiempo_espera_animacion;
     int screen_width;
     int speed;
