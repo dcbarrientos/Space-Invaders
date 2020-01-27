@@ -20,7 +20,7 @@ Menu *menu2;
 BITMAP *fondo;
 int pausa_cargando = 0;
 
-//https://www.youtube.com/watch?v=a2MoETBfdQE&list=PL6hPvfzEEMDZ4PSkN-5Zj_0-YVO7b0OgC&index=3
+//https://www.youtube.com/watch?v=YwMXIBB_JfQ&list=PL6hPvfzEEMDZ4PSkN-5Zj_0-YVO7b0OgC&index=12
 int main(int argc, char *argv[]){
     init_allegro(SCREEN_WIDTH, SCREEN_HEIGHT);
     //init_audio(70, 70);

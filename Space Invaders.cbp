@@ -52,6 +52,8 @@
 		<Unit filename="main.h" />
 		<Unit filename="math.cpp" />
 		<Unit filename="math.h" />
+		<Unit filename="menu.cpp" />
+		<Unit filename="menu.h" />
 		<Unit filename="nave.cpp" />
 		<Unit filename="nave.h" />
 		<Extensions>
