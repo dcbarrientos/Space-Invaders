@@ -4,7 +4,11 @@
 #include <allegro.h>
 
 #define SCREEN_WIDTH 600
-#define SCREEN_HEIGHT 375
+#define SCREEN_HEIGHT 600
+
+#define PLAYING_STATE 0
+#define MENU_STATE 1
+#define LOADING_STATE 2
 
 #define ENEMIGOS_COLUMNA 5
 #define ENEMIGOS_FILA 11
