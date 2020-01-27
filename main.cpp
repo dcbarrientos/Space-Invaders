@@ -7,12 +7,16 @@
 #include "enemigo.h"
 #include "math.h"
 #include "menu.h"
+#include "bunker.h"
 
 using namespace std;
+
 Nave *nave;
 Bala *bala_player;
 vector<Bala*> balas_enemigos;
 vector<Enemigo*> enemigos;
+vector<Bunker*> bunkers;
+
 int cont; //Tiempo espera entre tiros de los enemigos.
 int game_state;
 Menu *menu;
@@ -37,7 +41,7 @@ int main(int argc, char *argv[]){
     fondo = load_bitmap(fondo_path, NULL);
 
     int x = SCREEN_WIDTH / 2;
-    int y = SCREEN_HEIGHT - 50;
+    int y = SCREEN_HEIGHT - 80;
     cont = 0;
 
     balas_enemigos.clear();
@@ -88,17 +92,30 @@ int main(int argc, char *argv[]){
 }
 
 void load_level(){
-    int xt = 50;
-    int yt = 80;
+    //Posiciono los enemigos
+    int xt = get_fila_enemigo_centrada(ENEMIGOS_FILA, ENEMIGO_WIDTH);
+    int yt = 140;
     int stepx = 25;
     int stepy = 20;
     char enemigos_path[] = "resources\\enemigos.bmp";
+    enemigos.clear();
 
-    for(int i = 0; i < ENEMIGOS_FILA; i++){
-        for(int j = 0; j < ENEMIGOS_COLUMNA; j++){
-            enemigos.insert(enemigos.end(), new Enemigo(xt + i * stepx, yt + j * stepy, 25, 20, (int)(j / 2), enemigos_path));
+    for(int fila = 0; fila < ENEMIGOS_FILA; fila++){
+        for(int columna = 0; columna < ENEMIGOS_COLUMNA; columna++){
+            enemigos.insert(enemigos.end(), new Enemigo(xt + fila * stepx, yt + columna * stepy, ENEMIGO_WIDTH, ENEMIGO_HEIGHT, (int)(columna / 2), enemigos_path));
         }
     }
+
+    //Posiciono los bunkers
+    char bunker_path[] = "resources\\escudos.bmp";
+    bunkers.clear();
+    bunkers.insert(bunkers.end(), new Bunker(50, 500, 20, 16, 0, bunker_path));
+}
+
+int get_fila_enemigo_centrada(int cantidad_enemigos, int ancho_enemigo){
+    int _x = (WIDTH - cantidad_enemigos * ancho_enemigo) / 2;
+
+    return _x;
 }
 
 void update(){
@@ -106,6 +123,9 @@ void update(){
         //actualizo la posicion de las balas de los enemigos
         for(unsigned int i = 0; i < balas_enemigos.size(); i++)
             balas_enemigos[i]->update();
+
+        for(unsigned int i = 0; i < bunkers.size(); i++)
+            bunkers[i]->update();
 
         //verifico si las balas de los enemigos salieron de pantalla y las elimino
         for(unsigned int i = 0; i < balas_enemigos.size(); i++){
@@ -146,16 +166,39 @@ void update(){
             }
         }
 
+cout << bunkers.size();
+cout << " " << enemigos.size() << endl;
+        for(unsigned int i = 0; i < bunkers.size(); i++){
+            if(bunkers[i]->get_destroy()){
+                delete(bunkers[i]);
+                bunkers.erase(bunkers.begin() + i);
+            }
+        }
+
         //Verifico la colision entre la bala del jugador y los enemigos
         if(bala_player != NULL){
-            for(unsigned int i = 0; i < enemigos.size() && bala_player != NULL; i++){
+            for(unsigned int i = 0; i < enemigos.size(); i++){
                 if(bala_player->colision(enemigos[i])){
                     enemigos[i]->set_hit(true);
                     delete(bala_player);
                     bala_player = NULL;
+                    break;
                 }
             }
         }
+
+        if(bala_player != NULL){
+            for(unsigned int i = 0; i < bunkers.size(); i++){
+                if(bala_player->colision(bunkers[i])){
+                    bunkers[i]->set_hit();
+                    delete(bala_player);
+                    bala_player = NULL;
+                    break;
+                }
+            }
+        }
+
+
     }else if(game_state == MENU_STATE){
         menu->update();
     }else if(game_state == LOADING_STATE){
@@ -181,6 +224,11 @@ void render(BITMAP *buffer){
             for(unsigned int i = 0; i < enemigos.size(); i++)
                 enemigos[i]->render(buffer);
         }
+
+        if(bunkers.size() > 0){
+            for(unsigned int i = 0; i < bunkers.size(); i++)
+                bunkers[i]->render(buffer);
+        }
     } else if(game_state == MENU_STATE || game_state == LOADING_STATE){
         menu->render(buffer);
     }
@@ -191,7 +239,7 @@ void render(BITMAP *buffer){
 
 bool is_cambio_direccion(){
     for(unsigned int i = 0; i < enemigos.size(); i++){
-        if(enemigos[i]->is_borde(SCREEN_WIDTH))
+        if(enemigos[i]->is_borde())
             return true;
     }
     return false;

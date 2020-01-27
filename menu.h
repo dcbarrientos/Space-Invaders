@@ -2,13 +2,14 @@
 #define MENU_H_INCLUDED
 
 #include "element.h"
+#include "main.h"
 
 #define ESPERA_CAMBIO 25
 #define X_POS 0
 #define Y_POS 120
 #define WIDTH 600
 #define HEIGHT 400
-#define BORDE 40
+//#define BORDE 40
 
 class Menu: public Element{
     int index;

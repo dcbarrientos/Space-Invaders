@@ -44,6 +44,8 @@
 		</Linker>
 		<Unit filename="bala.cpp" />
 		<Unit filename="bala.h" />
+		<Unit filename="bunker.cpp" />
+		<Unit filename="bunker.h" />
 		<Unit filename="element.cpp" />
 		<Unit filename="element.h" />
 		<Unit filename="enemigo.cpp" />

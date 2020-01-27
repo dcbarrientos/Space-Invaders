@@ -2,6 +2,7 @@
 #define ENEMIGO_H_INCLUDED
 
 #include "element.h"
+#include "main.h"
 
 #define ESPERA_ENEMIGO_MAX 30
 #define X_STEP 20
@@ -23,7 +24,7 @@ public:
     void update();
     void render(BITMAP *buffer);
     void cambiar_rumbo();
-    bool is_borde(int _width);
+    bool is_borde();
 };
 
 #endif // ENEMIGO_H_INCLUDED

@@ -22,7 +22,9 @@ void Enemigo::update(){
             img_actual = 1;
         else
             img_actual = 0;
+
         x += speed;
+
         if(hit)
             destroy = true;
 
@@ -43,17 +45,19 @@ void Enemigo::render(BITMAP *buffer){
 void Enemigo::cambiar_rumbo(){
     speed *= -1;
     tiempo_espera *= .8;
+
     //x += speed;
     y += Y_STEP;
 }
 
-bool Enemigo::is_borde(int screen_width){
-    int borde = 5;
+bool Enemigo::is_borde(){
+    //int borde = WIDTH - BORDE;
     if(speed > 0){
-        if(x + width >= screen_width - borde)
+        //std::cout << x + width << std::endl;
+        if(x + width >= (SCREEN_WIDTH - BORDE - 10))
             return true;
     }else{
-        if(x - borde < 0)
+        if((x) < BORDE + 10)
             return true;
     }
     return false;

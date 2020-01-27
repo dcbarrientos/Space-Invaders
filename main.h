@@ -5,11 +5,14 @@
 
 #define SCREEN_WIDTH 600
 #define SCREEN_HEIGHT 600
+#define BORDE 40
 
 #define PLAYING_STATE 0
 #define MENU_STATE 1
 #define LOADING_STATE 2
 
+#define ENEMIGO_WIDTH 25
+#define ENEMIGO_HEIGHT 20
 #define ENEMIGOS_COLUMNA 5
 #define ENEMIGOS_FILA 11
 
@@ -32,4 +35,5 @@ void load_level();
 void update();
 void disparar_enemigo(int n_enemigo);
 bool is_cambio_direccion();
+int get_fila_enemigo_centrada(int cantidad_enemigos, int ancho_enemigo);
 #endif // MAIN_H_INCLUDED
