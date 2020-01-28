@@ -1,5 +1,5 @@
 #include "element.h"
-#include<iostream>
+
 Element::Element(int _x, int _y, int _width, int _height, char* img_path){
     x = _x;
     y = _y;
@@ -8,9 +8,9 @@ Element::Element(int _x, int _y, int _width, int _height, char* img_path){
     img = load_bitmap(img_path, NULL);
     hit = false;
     destroy = false;
-    if(img == NULL){
-        std::cout << "Error loading image: " << img_path << std::endl;
-    }
+//    if(img == NULL){
+//        std::cout << "Error loading image: " << img_path << std::endl;
+//    }
 }
 
 void Element::render(BITMAP *buffer){

@@ -1,5 +1,4 @@
 #include "enemigo.h"
-#include <iostream>
 
 Enemigo::Enemigo(int _x, int _y, int _width, int _height, int _tipo, char *img_path): Element(_x, _y, _width, _height, img_path){
     tipo = _tipo;
@@ -36,7 +35,7 @@ void Enemigo::render(BITMAP *buffer){
     int ypos = tipo * height;
     if(hit){
         //destroy = true;
-        masked_blit(img_explosion, buffer, 0, 0, x, y, width, height);
+        masked_blit(img_explosion, buffer, 0, 0, x - 10, y - 5, 41, 34);
     }else
         masked_blit(img, buffer, xpos, ypos, x, y, width, height);
 

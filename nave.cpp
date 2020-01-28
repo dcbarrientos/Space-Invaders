@@ -1,25 +1,38 @@
 #include "nave.h"
 #include <allegro.h>
-#include <iostream>
+#include<iostream>
 
 Nave::Nave(int x, int y, int width, int height, char* img_path): Element(x, y, width, height, img_path){
     destroy = false;
+    explotando = false;
 }
 
 void Nave::update(){
-    if(cantidad_vidas <= 0){
+    if(explotando){
         cont++;
-        if(cont % 3)
+        if(cont % 3){
             index_animacion++;
-
-        if(index_animacion > 2)
-            destroy = true;
+        }
+            std::cout << index_animacion << std::endl;
+        if(index_animacion > 6){
+            explotando = false;
+            if(cantidad_vidas <= 0)
+                destroy = true;
+        }
     }
 }
 
 void Nave::render(BITMAP *buffer){
     if(!destroy){
-        masked_blit(img, buffer, index_animacion * width, 0, x, y, width, height);
+        int tile;
+
+        if(!explotando)
+            tile = 0;
+        else
+            tile = ((index_animacion % 2) + 1) * width;
+
+
+        masked_blit(img, buffer, tile, 0, x, y, width, height);
     }
 }
 
@@ -32,6 +45,7 @@ void Nave::move(int key){
 
 void Nave::hit(){
     cantidad_vidas--;
+    explotando = true;
 }
 
 void Nave::set_cantidad_vidas(int _cantidad_vidas){

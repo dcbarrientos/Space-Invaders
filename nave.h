@@ -12,6 +12,7 @@ class Nave: public Element{
     int index_animacion;
     bool destroy;
     int cont;
+    bool explotando;
 
 public:
     Nave(int x, int y, int width, int height, char* img_path);

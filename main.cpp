@@ -149,6 +149,7 @@ void update(){
             }
         }
 
+        //Verifico si las balas de los enemigos colisionan con la nave
         for(unsigned int i = 0; i < balas_enemigos.size(); i++){
             if(balas_enemigos[i]->colision(nave)){
                 delete(balas_enemigos[i]);
@@ -281,7 +282,7 @@ void render(BITMAP *buffer){
 
     masked_blit(fondo, buffer, 0, 0, 0, 0, 600, 600);
     blit(buffer, screen, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    cout << "Score: " << score << endl;
+    //cout << "Score: " << score << endl;
 }
 
 void crear_bunker(int _x, int _y){
