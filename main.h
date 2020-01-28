@@ -10,6 +10,7 @@
 #define PLAYING_STATE 0
 #define MENU_STATE 1
 #define LOADING_STATE 2
+#define OVER_STATE 3
 
 #define ENEMIGO_WIDTH 25
 #define ENEMIGO_HEIGHT 20
@@ -36,4 +37,5 @@ void update();
 void disparar_enemigo(int n_enemigo);
 bool is_cambio_direccion();
 int get_fila_enemigo_centrada(int cantidad_enemigos, int ancho_enemigo);
+void crear_bunker(int _x, int _y);
 #endif // MAIN_H_INCLUDED

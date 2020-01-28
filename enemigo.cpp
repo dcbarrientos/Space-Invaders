@@ -62,3 +62,19 @@ bool Enemigo::is_borde(){
     }
     return false;
 }
+
+void Enemigo::set_speed(int _speed){
+    speed = _speed;
+}
+
+int Enemigo::get_score(){
+    if(tipo == 0)
+        return 30;
+    else if(tipo == 1)
+        return 20;
+    else if(tipo == 2)
+        return 10;
+
+    return 100;
+}
+

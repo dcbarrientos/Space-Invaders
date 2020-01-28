@@ -23,6 +23,7 @@ Menu *menu;
 Menu *menu2;
 BITMAP *fondo;
 int pausa_cargando = 0;
+int score;
 
 //https://www.youtube.com/watch?v=YwMXIBB_JfQ&list=PL6hPvfzEEMDZ4PSkN-5Zj_0-YVO7b0OgC&index=12
 int main(int argc, char *argv[]){
@@ -49,34 +50,45 @@ int main(int argc, char *argv[]){
     menu = new Menu(menu_path);
 
     nave = new Nave(x, y, NAVE_WIDTH, NAVE_HEIGHT, nave_path);
-    load_level();
+    //load_level();
 
     game_state = MENU_STATE;
     while(!key[KEY_ESC] ){
         clear_to_color(buffer, 0x000000);
 
         if(game_state == PLAYING_STATE){
-            if(key[KEY_LEFT])
-                nave->move(KEY_LEFT);
-            if(key[KEY_RIGHT])
-                nave->move(KEY_RIGHT);
+            if(nave->is_alive()){
+                if(key[KEY_LEFT])
+                    nave->move(KEY_LEFT);
+                if(key[KEY_RIGHT])
+                    nave->move(KEY_RIGHT);
 
-            if(key[KEY_SPACE]){
-                if(bala_player == NULL){
-                    int xt = nave->get_x() + NAVE_WIDTH / 2 - BALA_WIDTH / 2;
-                    bala_player = new Bala(xt, nave->get_y(), BALA_WIDTH, BALA_HEIGHT, BALA_SPEED * -1,bala_path);
+                if(key[KEY_SPACE]){
+                    if(bala_player == NULL){
+                        int xt = nave->get_x() + NAVE_WIDTH / 2 - BALA_WIDTH / 2;
+                        bala_player = new Bala(xt, nave->get_y(), BALA_WIDTH, BALA_HEIGHT, BALA_SPEED * -1,bala_path);
+                    }
                 }
-            }
 
-            if(enemigos.size() > 0)
-                disparar_enemigo(rand() % enemigos.size());
+                if(enemigos.size() > 0)
+                    disparar_enemigo(rand() % enemigos.size());
+            }
         }else if(game_state == MENU_STATE){
             if(key[KEY_ENTER]){
                 game_state = LOADING_STATE;
                 menu->set_fila(1);
                 pausa_cargando = 0;
+                nave->set_cantidad_vidas(MAX_VIDAS);
+                load_level();
+                nave->set_position(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 80);
+                score = 0;
             }
-        }else if(game_state == LOADING_STATE){
+        }else if(game_state == OVER_STATE){
+            if(key[KEY_SPACE]){
+                game_state = MENU_STATE;
+                menu->set_fila(0);
+            }
+
         }
 
         update();
@@ -107,9 +119,11 @@ void load_level(){
     }
 
     //Posiciono los bunkers
-    char bunker_path[] = "resources\\escudos.bmp";
     bunkers.clear();
-    bunkers.insert(bunkers.end(), new Bunker(50, 500, 20, 16, 0, bunker_path));
+    crear_bunker(64, 470);
+    crear_bunker(188, 470);
+    crear_bunker(311, 470);
+    crear_bunker(434, 470);
 }
 
 int get_fila_enemigo_centrada(int cantidad_enemigos, int ancho_enemigo){
@@ -132,6 +146,14 @@ void update(){
             if(balas_enemigos[i]->is_out()){
                 delete(balas_enemigos[i]);
                 balas_enemigos.erase(balas_enemigos.begin() + i);
+            }
+        }
+
+        for(unsigned int i = 0; i < balas_enemigos.size(); i++){
+            if(balas_enemigos[i]->colision(nave)){
+                delete(balas_enemigos[i]);
+                balas_enemigos.erase(balas_enemigos.begin() + i);
+                nave->hit();
             }
         }
 
@@ -166,12 +188,22 @@ void update(){
             }
         }
 
-cout << bunkers.size();
-cout << " " << enemigos.size() << endl;
+        //elimino bunkers que estan en condiciones de ser eliminados.
         for(unsigned int i = 0; i < bunkers.size(); i++){
             if(bunkers[i]->get_destroy()){
                 delete(bunkers[i]);
                 bunkers.erase(bunkers.begin() + i);
+            }
+        }
+
+        //Verifico la colision entre la bala de los enemigos y los bunkers
+        for(unsigned int ba = 0; ba < balas_enemigos.size(); ba++){
+            for(unsigned int bu = 0; bu < bunkers.size(); bu++){
+                if(balas_enemigos[ba]->colision(bunkers[bu])){
+                    bunkers[bu]->set_hit();
+                    delete(balas_enemigos[ba]);
+                    balas_enemigos.erase(balas_enemigos.begin() + ba);
+                }
             }
         }
 
@@ -180,6 +212,7 @@ cout << " " << enemigos.size() << endl;
             for(unsigned int i = 0; i < enemigos.size(); i++){
                 if(bala_player->colision(enemigos[i])){
                     enemigos[i]->set_hit(true);
+                    score += enemigos[i]->get_score();
                     delete(bala_player);
                     bala_player = NULL;
                     break;
@@ -187,18 +220,24 @@ cout << " " << enemigos.size() << endl;
             }
         }
 
+
+        //Verifico la colision entre la bala del jugador y los bunkers
         if(bala_player != NULL){
-            for(unsigned int i = 0; i < bunkers.size(); i++){
+            for(unsigned int i = 0; i < bunkers.size() && bala_player != NULL; i++){
                 if(bala_player->colision(bunkers[i])){
                     bunkers[i]->set_hit();
                     delete(bala_player);
                     bala_player = NULL;
-                    break;
                 }
             }
         }
 
-
+        if(!nave->is_alive()){
+            game_state = OVER_STATE;
+            for(unsigned i = 0; i < enemigos.size(); i++){
+                enemigos[i]->set_speed(0);
+            }
+        }
     }else if(game_state == MENU_STATE){
         menu->update();
     }else if(game_state == LOADING_STATE){
@@ -206,11 +245,18 @@ cout << " " << enemigos.size() << endl;
         pausa_cargando++;
         if(pausa_cargando > 100)
             game_state = PLAYING_STATE;
+    }else if(game_state == OVER_STATE){
+        nave->update();
+
+        for(unsigned i = 0; i < enemigos.size(); i++){
+            enemigos[i]->update();
+        }
+
     }
 }
 
 void render(BITMAP *buffer){
-    if(game_state == PLAYING_STATE){
+    if(game_state == PLAYING_STATE || game_state == OVER_STATE){
         if(nave != NULL)
             nave->render(buffer);
 
@@ -235,6 +281,22 @@ void render(BITMAP *buffer){
 
     masked_blit(fondo, buffer, 0, 0, 0, 0, 600, 600);
     blit(buffer, screen, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    cout << "Score: " << score << endl;
+}
+
+void crear_bunker(int _x, int _y){
+    char bunker_path[] = "resources\\escudos.bmp";
+
+    bunkers.insert(bunkers.end(), new Bunker(_x + 00, _y, 20, 16, 0, bunker_path));
+    bunkers.insert(bunkers.end(), new Bunker(_x + 20, _y, 20, 16, 4, bunker_path));
+    bunkers.insert(bunkers.end(), new Bunker(_x + 40, _y, 20, 16, 4, bunker_path));
+    bunkers.insert(bunkers.end(), new Bunker(_x + 60, _y, 20, 16, 4, bunker_path));
+    bunkers.insert(bunkers.end(), new Bunker(_x + 80, _y, 20, 16, 2, bunker_path));
+
+    bunkers.insert(bunkers.end(), new Bunker(_x + 00, _y + 16, 20, 16, 4, bunker_path));
+    bunkers.insert(bunkers.end(), new Bunker(_x + 20, _y + 16, 20, 16, 1, bunker_path));
+    bunkers.insert(bunkers.end(), new Bunker(_x + 60, _y + 16, 20, 16, 3, bunker_path));
+    bunkers.insert(bunkers.end(), new Bunker(_x + 80, _y + 16, 20, 16, 4, bunker_path));
 }
 
 bool is_cambio_direccion(){

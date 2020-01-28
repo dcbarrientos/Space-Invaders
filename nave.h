@@ -5,12 +5,24 @@
 
 
 #define X_SPEED 5
+#define MAX_VIDAS 3
 
 class Nave: public Element{
-    public:
-    Nave(int x, int y, int width, int height, char* img_path): Element(x, y, width, height, img_path){};
+    int cantidad_vidas;
+    int index_animacion;
+    bool destroy;
+    int cont;
+
+public:
+    Nave(int x, int y, int width, int height, char* img_path);
     void move(int key);
-    void update(int key);
+    void update();
+    void render(BITMAP *buffer);
+    void hit();
+    void set_cantidad_vidas(int _cantidad_vidas);
+    bool is_alive();
+    bool get_destroy();
+    void set_position(int _x, int _y);
 };
 
 #endif // NAVE_H_INCLUDED

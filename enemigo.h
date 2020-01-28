@@ -25,6 +25,8 @@ public:
     void render(BITMAP *buffer);
     void cambiar_rumbo();
     bool is_borde();
+    void set_speed(int _speed);
+    int get_score();
 };
 
 #endif // ENEMIGO_H_INCLUDED
