@@ -21,9 +21,12 @@ public:
     void render(BITMAP *buffer);
     void hit();
     void set_cantidad_vidas(int _cantidad_vidas);
+    int get_cantidad_vidas();
     bool is_alive();
+    bool is_explotando();
     bool get_destroy();
     void set_position(int _x, int _y);
+    bool colision(Element *e);
 };
 
 #endif // NAVE_H_INCLUDED

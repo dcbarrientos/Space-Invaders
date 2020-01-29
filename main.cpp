@@ -24,11 +24,20 @@ Menu *menu2;
 BITMAP *fondo;
 int pausa_cargando = 0;
 int score;
+FONT *fuente;
 
 //https://www.youtube.com/watch?v=YwMXIBB_JfQ&list=PL6hPvfzEEMDZ4PSkN-5Zj_0-YVO7b0OgC&index=12
 int main(int argc, char *argv[]){
     init_allegro(SCREEN_WIDTH, SCREEN_HEIGHT);
     //init_audio(70, 70);
+
+    FONT *fuente;
+    PALETTE palette;
+    fuente = load_font("resources\\fonts\\spinv.pcx", palette, NULL);
+    if(!fuente){
+        cout << "No cargó la fuente" << endl;
+        return -1;
+    }
 
     BITMAP *buffer = create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -134,6 +143,9 @@ int get_fila_enemigo_centrada(int cantidad_enemigos, int ancho_enemigo){
 
 void update(){
     if(game_state == PLAYING_STATE){
+        if(nave->is_explotando())
+            nave->update();
+
         //actualizo la posicion de las balas de los enemigos
         for(unsigned int i = 0; i < balas_enemigos.size(); i++)
             balas_enemigos[i]->update();
@@ -221,6 +233,17 @@ void update(){
             }
         }
 
+        //Verifico la colision entre la bala del jugador y la de los enemigos.
+        if(bala_player != NULL){
+            for(unsigned int i = 0; i < balas_enemigos.size() && bala_player != NULL; i++){
+                if(balas_enemigos[i]->colision(bala_player)){
+                    delete(balas_enemigos[i]);
+                    balas_enemigos.erase(balas_enemigos.begin() + i);
+                    delete(bala_player);
+                    bala_player = NULL;
+                }
+            }
+        }
 
         //Verifico la colision entre la bala del jugador y los bunkers
         if(bala_player != NULL){
@@ -230,6 +253,14 @@ void update(){
                     delete(bala_player);
                     bala_player = NULL;
                 }
+            }
+        }
+
+        //Verifico si los enemigos llegan a la nave
+        for(unsigned int i = 0; i < enemigos.size(); i++){
+            if(nave->colision(enemigos[i])){
+                nave->hit();
+                nave->set_cantidad_vidas(0);
             }
         }
 
@@ -282,7 +313,10 @@ void render(BITMAP *buffer){
 
     masked_blit(fondo, buffer, 0, 0, 0, 0, 600, 600);
     blit(buffer, screen, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    //cout << "Score: " << score << endl;
+    if(game_state == PLAYING_STATE){
+        textout_ex(screen, font, "Score: ", 60, 130, 0xffffff, 0x000000);
+    }
+//    cout << "Score: " << score << "Lives: " << nave->get_cantidad_vidas()<< endl;
 }
 
 void crear_bunker(int _x, int _y){
@@ -290,14 +324,10 @@ void crear_bunker(int _x, int _y){
 
     bunkers.insert(bunkers.end(), new Bunker(_x + 00, _y, 20, 16, 0, bunker_path));
     bunkers.insert(bunkers.end(), new Bunker(_x + 20, _y, 20, 16, 4, bunker_path));
-    bunkers.insert(bunkers.end(), new Bunker(_x + 40, _y, 20, 16, 4, bunker_path));
-    bunkers.insert(bunkers.end(), new Bunker(_x + 60, _y, 20, 16, 4, bunker_path));
-    bunkers.insert(bunkers.end(), new Bunker(_x + 80, _y, 20, 16, 2, bunker_path));
+    bunkers.insert(bunkers.end(), new Bunker(_x + 40, _y, 20, 16, 2, bunker_path));
 
-    bunkers.insert(bunkers.end(), new Bunker(_x + 00, _y + 16, 20, 16, 4, bunker_path));
-    bunkers.insert(bunkers.end(), new Bunker(_x + 20, _y + 16, 20, 16, 1, bunker_path));
-    bunkers.insert(bunkers.end(), new Bunker(_x + 60, _y + 16, 20, 16, 3, bunker_path));
-    bunkers.insert(bunkers.end(), new Bunker(_x + 80, _y + 16, 20, 16, 4, bunker_path));
+    bunkers.insert(bunkers.end(), new Bunker(_x + 00, _y + 16, 20, 16, 1, bunker_path));
+    bunkers.insert(bunkers.end(), new Bunker(_x + 40, _y + 16, 20, 16, 3, bunker_path));
 }
 
 bool is_cambio_direccion(){

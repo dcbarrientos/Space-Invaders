@@ -1,6 +1,5 @@
 #include "nave.h"
 #include <allegro.h>
-#include<iostream>
 
 Nave::Nave(int x, int y, int width, int height, char* img_path): Element(x, y, width, height, img_path){
     destroy = false;
@@ -13,8 +12,9 @@ void Nave::update(){
         if(cont % 3){
             index_animacion++;
         }
-            std::cout << index_animacion << std::endl;
-        if(index_animacion > 6){
+
+        if(index_animacion > 8){
+            index_animacion = 0;
             explotando = false;
             if(cantidad_vidas <= 0)
                 destroy = true;
@@ -65,7 +65,26 @@ bool Nave::get_destroy(){
     return destroy;
 }
 
+bool Nave::is_explotando(){
+    return explotando;
+}
+
 void Nave::set_position(int _x, int _y){
     x = _x;
     y = _y;
+}
+
+int Nave::get_cantidad_vidas(){
+    return cantidad_vidas;
+}
+
+bool Nave::colision(Element *e){
+    if(e->get_x() < x || e->get_y() > y)
+        return false;
+    else{
+        if(e->get_y() + e->get_height() < y)
+            return false;
+    }
+
+    return true;
 }

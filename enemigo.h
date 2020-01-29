@@ -5,8 +5,8 @@
 #include "main.h"
 
 #define ESPERA_ENEMIGO_MAX 30
-#define X_STEP 20
-#define Y_STEP 20
+#define X_STEP 5
+#define Y_STEP 10
 
 class Enemigo: public Element{
 private:
