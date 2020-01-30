@@ -38,4 +38,5 @@ void disparar_enemigo(int n_enemigo);
 bool is_cambio_direccion();
 int get_fila_enemigo_centrada(int cantidad_enemigos, int ancho_enemigo);
 void crear_bunker(int _x, int _y);
+void print_bar(BITMAP *buffer);
 #endif // MAIN_H_INCLUDED

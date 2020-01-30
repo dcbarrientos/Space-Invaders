@@ -24,6 +24,7 @@ Menu *menu2;
 BITMAP *fondo;
 int pausa_cargando = 0;
 int score;
+int hi_score;
 FONT *fuente;
 
 //https://www.youtube.com/watch?v=YwMXIBB_JfQ&list=PL6hPvfzEEMDZ4PSkN-5Zj_0-YVO7b0OgC&index=12
@@ -31,9 +32,8 @@ int main(int argc, char *argv[]){
     init_allegro(SCREEN_WIDTH, SCREEN_HEIGHT);
     //init_audio(70, 70);
 
-    FONT *fuente;
     PALETTE palette;
-    fuente = load_font("resources\\fonts\\spinv.pcx", palette, NULL);
+    fuente = load_font("resources\\fonts\\pixelcoleco.pcx", palette, NULL);
     if(!fuente){
         cout << "No cargó la fuente" << endl;
         return -1;
@@ -59,9 +59,9 @@ int main(int argc, char *argv[]){
     menu = new Menu(menu_path);
 
     nave = new Nave(x, y, NAVE_WIDTH, NAVE_HEIGHT, nave_path);
-    //load_level();
 
     game_state = MENU_STATE;
+    hi_score = 0;
     while(!key[KEY_ESC] ){
         clear_to_color(buffer, 0x000000);
 
@@ -94,6 +94,7 @@ int main(int argc, char *argv[]){
             }
         }else if(game_state == OVER_STATE){
             if(key[KEY_SPACE]){
+
                 game_state = MENU_STATE;
                 menu->set_fila(0);
             }
@@ -115,7 +116,7 @@ int main(int argc, char *argv[]){
 void load_level(){
     //Posiciono los enemigos
     int xt = get_fila_enemigo_centrada(ENEMIGOS_FILA, ENEMIGO_WIDTH);
-    int yt = 140;
+    int yt = 160;
     int stepx = 25;
     int stepy = 20;
     char enemigos_path[] = "resources\\enemigos.bmp";
@@ -266,6 +267,9 @@ void update(){
 
         if(!nave->is_alive()){
             game_state = OVER_STATE;
+            if(score > hi_score)
+                hi_score = score;
+
             for(unsigned i = 0; i < enemigos.size(); i++){
                 enemigos[i]->set_speed(0);
             }
@@ -307,16 +311,27 @@ void render(BITMAP *buffer){
             for(unsigned int i = 0; i < bunkers.size(); i++)
                 bunkers[i]->render(buffer);
         }
+        print_bar(buffer);
     } else if(game_state == MENU_STATE || game_state == LOADING_STATE){
         menu->render(buffer);
     }
 
     masked_blit(fondo, buffer, 0, 0, 0, 0, 600, 600);
     blit(buffer, screen, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    if(game_state == PLAYING_STATE){
-        textout_ex(screen, font, "Score: ", 60, 130, 0xffffff, 0x000000);
-    }
-//    cout << "Score: " << score << "Lives: " << nave->get_cantidad_vidas()<< endl;
+}
+
+void print_bar(BITMAP *buffer){
+    int _y = 130;
+    int _x = 60;
+
+    string t = "Score: " + to_string(score);
+    textout_ex(buffer, fuente, t.c_str(), _x, _y, 0xffffff, 0x000000);
+
+    t = "Lives: " + to_string(nave->get_cantidad_vidas());
+    textout_ex(buffer, fuente, t.c_str(), _x + 300, _y, 0xffffff, 0x000000);
+
+    t = "HI-SCORE: " + to_string(hi_score);
+    textout_ex(buffer, fuente, t.c_str(), _x + 150, _y, 0xffffff, 0x000000);
 }
 
 void crear_bunker(int _x, int _y){
