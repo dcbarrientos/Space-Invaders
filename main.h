@@ -14,8 +14,10 @@
 
 #define ENEMIGO_WIDTH 25
 #define ENEMIGO_HEIGHT 20
-#define ENEMIGOS_COLUMNA 5
-#define ENEMIGOS_FILA 11
+#define COLUMNS 11
+#define ROWS 5
+//#define ENEMIGOS_COLUMNA 5
+//#define ENEMIGOS_FILA 11
 
 #define NAVE_WIDTH 30
 #define NAVE_HEIGHT 20
@@ -39,4 +41,5 @@ bool is_cambio_direccion();
 int get_fila_enemigo_centrada(int cantidad_enemigos, int ancho_enemigo);
 void crear_bunker(int _x, int _y);
 void print_bar(BITMAP *buffer);
+
 #endif // MAIN_H_INCLUDED

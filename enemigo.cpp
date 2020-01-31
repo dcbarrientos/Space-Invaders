@@ -1,6 +1,6 @@
 #include "enemigo.h"
-
-Enemigo::Enemigo(int _x, int _y, int _width, int _height, int _tipo, char *img_path): Element(_x, _y, _width, _height, img_path){
+#include<iostream>
+Enemigo::Enemigo(int _x, int _y, int _width, int _height, int _tipo, int _fila, char *img_path): Element(_x, _y, _width, _height, img_path){
     tipo = _tipo;
     img_actual = 0;
     tiempo_espera_animacion = 0;
@@ -8,6 +8,7 @@ Enemigo::Enemigo(int _x, int _y, int _width, int _height, int _tipo, char *img_p
     destroy = false;
     tiempo_espera = ESPERA_ENEMIGO_MAX;
     img_explosion = load_bitmap( "resources\\pum_enemigo.bmp", NULL);
+    fila = _fila;
  }
 
 Enemigo::~Enemigo(){
@@ -15,6 +16,7 @@ Enemigo::~Enemigo(){
 
 void Enemigo::update(){
     tiempo_espera_animacion++;
+
     if(tiempo_espera_animacion >= tiempo_espera){
         tiempo_espera_animacion = 0;
         if(img_actual == 0)

@@ -15,11 +15,12 @@ private:
     int tiempo_espera;
     int tiempo_espera_animacion;
     int screen_width;
+    int fila;
     int speed;
     BITMAP *img_explosion;
 
 public:
-    Enemigo(int _x, int _y, int _width, int _height, int _tipo, char *img_path);
+    Enemigo(int _x, int _y, int _width, int _height, int _tipo, int _fila, char *img_path);
     ~Enemigo();
     void update();
     void render(BITMAP *buffer);

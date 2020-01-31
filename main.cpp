@@ -22,6 +22,12 @@ int game_state;
 Menu *menu;
 Menu *menu2;
 BITMAP *fondo;
+
+SAMPLE *alien_killed_sound;
+int alien_voice;
+SAMPLE *explosion_sound;
+int explosion_voice;
+
 int pausa_cargando = 0;
 int score;
 int hi_score;
@@ -30,7 +36,7 @@ FONT *fuente;
 //https://www.youtube.com/watch?v=YwMXIBB_JfQ&list=PL6hPvfzEEMDZ4PSkN-5Zj_0-YVO7b0OgC&index=12
 int main(int argc, char *argv[]){
     init_allegro(SCREEN_WIDTH, SCREEN_HEIGHT);
-    //init_audio(70, 70);
+    init_audio(70, 70);
 
     PALETTE palette;
     fuente = load_font("resources\\fonts\\pixelcoleco.pcx", palette, NULL);
@@ -48,6 +54,13 @@ int main(int argc, char *argv[]){
     char fondo_path[] = "resources\\fondo.bmp";
     char menu_path[] = "resources\\portada.bmp";
 
+    char shoot_sound_path[] = "resources\\sounds\\shoot.wav";
+    char explosion_sound_path[] = "resources\\sounds\\explosion.wav";
+    char alien_killed_sound_path[] = "resources\\sounds\\invaderkilled.wav";
+    SAMPLE *shoot_sound = load_wav(shoot_sound_path);
+    alien_killed_sound = load_wav(alien_killed_sound_path);
+    explosion_sound = load_wav(explosion_sound_path);
+
     fondo = load_bitmap(fondo_path, NULL);
 
     int x = SCREEN_WIDTH / 2;
@@ -62,6 +75,8 @@ int main(int argc, char *argv[]){
 
     game_state = MENU_STATE;
     hi_score = 0;
+    //row_move = ROWS - 1;
+
     while(!key[KEY_ESC] ){
         clear_to_color(buffer, 0x000000);
 
@@ -76,6 +91,7 @@ int main(int argc, char *argv[]){
                     if(bala_player == NULL){
                         int xt = nave->get_x() + NAVE_WIDTH / 2 - BALA_WIDTH / 2;
                         bala_player = new Bala(xt, nave->get_y(), BALA_WIDTH, BALA_HEIGHT, BALA_SPEED * -1,bala_path);
+                        play_sample(shoot_sound, 100, 150, 1000, 0);
                     }
                 }
 
@@ -115,16 +131,17 @@ int main(int argc, char *argv[]){
 
 void load_level(){
     //Posiciono los enemigos
-    int xt = get_fila_enemigo_centrada(ENEMIGOS_FILA, ENEMIGO_WIDTH);
+    int xt = get_fila_enemigo_centrada(COLUMNS, ENEMIGO_WIDTH);
     int yt = 160;
     int stepx = 25;
     int stepy = 20;
     char enemigos_path[] = "resources\\enemigos.bmp";
     enemigos.clear();
 
-    for(int fila = 0; fila < ENEMIGOS_FILA; fila++){
-        for(int columna = 0; columna < ENEMIGOS_COLUMNA; columna++){
-            enemigos.insert(enemigos.end(), new Enemigo(xt + fila * stepx, yt + columna * stepy, ENEMIGO_WIDTH, ENEMIGO_HEIGHT, (int)(columna / 2), enemigos_path));
+    for(int fila = 0; fila < ROWS; fila++){
+        for(int columna = 0; columna < COLUMNS; columna++){
+            //enemigos.insert(enemigos.end(), new Enemigo(xt + fila * stepx, yt + columna * stepy, ENEMIGO_WIDTH, ENEMIGO_HEIGHT, (int)(columna / 2), fila, enemigos_path));
+            enemigos.insert(enemigos.end(), new Enemigo(xt + columna * stepx, yt + fila * stepy, ENEMIGO_WIDTH, ENEMIGO_HEIGHT, (int)(fila / 2), fila, enemigos_path));
         }
     }
 
@@ -165,6 +182,9 @@ void update(){
         //Verifico si las balas de los enemigos colisionan con la nave
         for(unsigned int i = 0; i < balas_enemigos.size(); i++){
             if(balas_enemigos[i]->colision(nave)){
+                if(voice_check(explosion_voice) == NULL)
+                    explosion_voice = play_sample(explosion_sound, 100, 0, 1000, 0);
+
                 delete(balas_enemigos[i]);
                 balas_enemigos.erase(balas_enemigos.begin() + i);
                 nave->hit();
@@ -225,6 +245,9 @@ void update(){
         if(bala_player != NULL){
             for(unsigned int i = 0; i < enemigos.size(); i++){
                 if(bala_player->colision(enemigos[i])){
+                    if(voice_check(alien_voice) == NULL)
+                        alien_voice = play_sample(alien_killed_sound, 100, 0, 1000, 0);
+
                     enemigos[i]->set_hit(true);
                     score += enemigos[i]->get_score();
                     delete(bala_player);
